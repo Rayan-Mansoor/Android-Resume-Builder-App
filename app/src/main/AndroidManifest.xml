@@ -19,22 +19,26 @@
         tools:targetApi="34">
         <activity
             android:name=".Activities.ProjectsActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="false" />
         <activity
             android:name=".Activities.ExperienceActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="false" />
         <activity
             android:name=".Activities.SkillsActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="false" />
         <activity
             android:name=".Activities.DisplayResumeActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.EducationActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="false" />
         <activity
             android:name=".Activities.PersonalDetailsActivity"
+            android:windowSoftInputMode="adjustNothing"
             android:exported="false" />
         <activity
             android:name=".Activities.DataCollectionActivity"

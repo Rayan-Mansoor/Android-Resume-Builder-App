@@ -1,13 +1,22 @@
 package com.example.resumebuilder.Activities
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.resumebuilder.Models.PersonalDetails
 import com.example.resumebuilder.Utils.MyApp
 import com.example.resumebuilder.databinding.ActivityDataCollectionBinding
 
 class DataCollectionActivity : AppCompatActivity() {
     private lateinit var binding : ActivityDataCollectionBinding
+
+
+    companion object {
+        fun newIntent(context: Context, personalDetails: PersonalDetails): Intent {
+            return Intent(context, DataCollectionActivity::class.java).putExtra("phoneIntent", personalDetails.PhoneNo)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityDataCollectionBinding.inflate(layoutInflater)

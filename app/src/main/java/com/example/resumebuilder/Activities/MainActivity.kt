@@ -1,6 +1,7 @@
 package com.example.resumebuilder.Activities
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,9 +15,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.resumebuilder.Database.AppDB
 import com.example.resumebuilder.Models.PersonalDetails
 import com.example.resumebuilder.Adapter.RecentRCVadapter
+import com.example.resumebuilder.Notifications.ReminderWorker
 import com.example.resumebuilder.R
 import com.example.resumebuilder.Utils.MyApp
 import com.example.resumebuilder.databinding.ActivityMainBinding
@@ -26,60 +31,23 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        private val REQUIRED_PERMISSIONS =
-            mutableListOf (
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    add(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
 
-                else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    add(android.Manifest.permission.READ_MEDIA_IMAGES)
-                }
-            }.toTypedArray()
-
-    }
 
     private lateinit var binding : ActivityMainBinding
     private  var cvArrayList : ArrayList<PersonalDetails> = ArrayList()
     private lateinit var imgadapter : RecentRCVadapter
     private lateinit var db : AppDB
-    private val activityResultLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions())
-        { permissions ->
-            // Handle Permission granted/rejected
-            var permissionGranted = true
-            permissions.entries.forEach {
-                if (it.key in REQUIRED_PERMISSIONS && it.value == false)
-                    permissionGranted = false
-            }
-            if (!permissionGranted) {
-                Toast.makeText(baseContext,
-                    "Permission request denied",
-                    Toast.LENGTH_SHORT).show()
-            }
+
+
+    companion object {
+        fun newIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
         }
-
-    private fun requestPermissions() {
-        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
     }
-
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it) == PackageManager.PERMISSION_GRANTED
-    }
-
-
-
 
 
 //    private lateinit var progressDialog : ProgressDialog
@@ -91,14 +59,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        requestPermissions()
+        val periodicRequest =
+            PeriodicWorkRequestBuilder<ReminderWorker>(15, TimeUnit.MINUTES)
+                .build()
 
-//        GlobalScope.launch {
-//            delay(5000)
-//            if (!allPermissionsGranted()){
-//                Log.d("MainActivity","permission not granted")
-//            }
-//        }
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "ReminderWork",
+            ExistingPeriodicWorkPolicy.KEEP,
+            periodicRequest
+        )
+
 
 
 //       applicationContext.deleteDatabase("resume-database")
@@ -134,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 //        progressDialog.show()
 
         if (::imgadapter.isInitialized){
-            Log.d("MainActivity", "notify dataset change called")
+            Log.e("MainActivity", "notify dataset change called")
             setupRecyclerView()
 
         }

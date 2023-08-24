@@ -83,4 +83,6 @@ interface AppDAO {
     @Query("select * from projectdetails where FP = :phoneNo")
     suspend fun getProjectDetails(phoneNo : String) : List<ProjectDetails>
 
+    @Query("SELECT * FROM personaldetails ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomCV() : PersonalDetails
 }

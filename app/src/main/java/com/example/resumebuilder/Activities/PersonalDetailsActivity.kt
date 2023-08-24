@@ -2,15 +2,21 @@ package com.example.resumebuilder.Activities
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.resumebuilder.Database.AppDB
-import com.example.resumebuilder.Utils.MyApp
 import com.example.resumebuilder.Models.PersonalDetails
+import com.example.resumebuilder.R
+import com.example.resumebuilder.Utils.MyApp
 import com.example.resumebuilder.databinding.ActivityPersonalDetailsBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -78,15 +84,44 @@ class PersonalDetailsActivity : AppCompatActivity() {
     }
 
     private fun selectImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, SELECT_IMAGE_REQUEST)
+        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
+
+    val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        // Callback is invoked after the user selects a media item or closes the
+        // photo picker.
+        if (uri != null) {
+            imageURI = uri
+            val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            contentResolver.takePersistableUriPermission(uri, flag)
+            Log.d("PhotoPicker", "Selected URI: $uri")
+            Glide.with(this)
+                .load(uri)
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.baseline_person_24)  // Optional placeholder image
+                        .error(R.drawable.baseline_error_24))  // Optional error image
+                .diskCacheStrategy(DiskCacheStrategy.ALL)  // Caching strategy
+                .into(binding.YourImg)
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SELECT_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             imageURI = data.data!!
-            binding.YourImg.setImageURI(imageURI)
+
+            grantUriPermission(
+                packageName,
+                imageURI,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+
+//            binding.YourImg.setImageURI(imageURI)
+
 
 
         }

@@ -1,7 +1,11 @@
 package com.example.resumebuilder.Activities
 
+import android.content.res.Resources
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.ViewTreeObserver
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +24,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
+
 
 class ProjectsActivity : AppCompatActivity() {
     private lateinit var binding : ActivityProjectsBinding
@@ -63,6 +69,10 @@ class ProjectsActivity : AppCompatActivity() {
             binding.projET.setText("")
             binding.yearET.setText("")
         }
+        
+
+
+
     }
 
     private fun setupRecyclerView(){
@@ -110,4 +120,6 @@ class ProjectsActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

@@ -37,6 +37,11 @@ import com.example.resumebuilder.Models.ExperienceDetails
 import com.example.resumebuilder.Models.ProjectDetails
 import java.io.File
 import java.io.FileOutputStream
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.example.resumebuilder.R
+import com.example.resumebuilder.Utils.FileUtils
 
 class DisplayResumeActivity : AppCompatActivity() {
     private lateinit var binding : ActivityDisplayResumeBinding
@@ -50,6 +55,7 @@ class DisplayResumeActivity : AppCompatActivity() {
     private lateinit var pdfUri : Uri
 
     private val REQUEST_CODE_PERMISSIONS = 101
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +88,19 @@ class DisplayResumeActivity : AppCompatActivity() {
 
                     Log.d("DisplayResumeActivity", parsedUri.toString())
 
-                    binding.cvImg.setImageURI(parsedUri)
+                    val FileUtils = FileUtils(this@DisplayResumeActivity)
+
+                    val path = FileUtils.getPath(parsedUri)
+
+                    Glide.with(this@DisplayResumeActivity)
+                        .load(path)
+                        .apply(RequestOptions()
+                            .placeholder(R.drawable.baseline_person_24)  // Optional placeholder image
+                            .error(R.drawable.baseline_error_24))  // Optional error image
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)  // Caching strategy
+                        .into(binding.cvImg)
+
+//                    binding.cvImg.setImageURI(parsedUri)
                     binding.cvName.text = perDet.Name
                     binding.cvEmail.text = perDet.Email
                     binding.cvPhone.text = perDet.PhoneNo

@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".Utils.MyApp"
@@ -16,35 +18,9 @@
         android:roundIcon="@drawable/resume_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:targetApi="34">
+        tools:targetApi="32">
         <activity
-            android:name=".Activities.ProjectsActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.ExperienceActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.SkillsActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.DisplayResumeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.EducationActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.PersonalDetailsActivity"
-            android:windowSoftInputMode="adjustNothing"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.DataCollectionActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.MainActivity"
+            android:name=".Activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,6 +28,49 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activities.ProjectsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Activities.ExperienceActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Activities.SkillsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Activities.DisplayResumeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.EducationActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Activities.PersonalDetailsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".Activities.DataCollectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.MainActivity"
+            android:exported="false">
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.resumebuilder"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"
+                tools:replace="android:resource" />
+        </provider>
+
     </application>
 
 </manifest>
